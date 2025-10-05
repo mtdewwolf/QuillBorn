@@ -1,0 +1,10 @@
+{
+  "": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm build",
+  "env": {
+    "NEXT_TELEMETRY_DISABLED": "1"
+  }
+}

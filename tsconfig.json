@@ -1,0 +1,9 @@
+{
+  "extends": "@quillborn/config/tsconfig/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {}
+  },
+  "include": ["packages", "apps", "prisma", "docs", "*.ts", "*.mts"],
+  "exclude": ["node_modules", "dist"]
+}

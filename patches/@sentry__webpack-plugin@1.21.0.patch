@@ -1,0 +1,13 @@
+diff --git a/index.d.ts b/index.d.ts
+index 78c4e57146b36232bab03470e3231baff640d9b7..59fc309e5442dc8e8bc2f59da595095befa648e3 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -131,7 +131,7 @@ declare class SentryCliPlugin implements WebpackPluginInstance {
+   options: SentryCliPlugin.SentryCliPluginOptions;
+   constructor(options: SentryCliPlugin.SentryCliPluginOptions);
+   static cliBinaryExists(): boolean;
+-  static downloadCliBinary(logger: { log(...args: unknown[]) }): Promise<void>;
++  static downloadCliBinary(logger: { log(...args: unknown[]): void }): Promise<void>;
+   apply(compiler: Compiler): void;
+ }
+ 

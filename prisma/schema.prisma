@@ -1,0 +1,294 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ChecklistPhase {
+  OUTLINE_GATE
+  SCENE_READY
+  PUBLISH_GATE
+}
+
+enum RunTarget {
+  SCENE
+  CHAPTER
+}
+
+enum RunStatus {
+  OK
+  RETRY
+  FAIL
+}
+
+enum SubscriptionPlan {
+  FREE
+  PRO
+  STUDIO
+  PUBLISHER
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+}
+
+model User {
+  id          String         @id @default(uuid())
+  email       String         @unique
+  name        String?
+  avatarUrl   String?
+  projects    Project[]
+  drafts      Draft[]        @relation("DraftAuthor")
+  runs        Run[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  subscriptions Subscription[]
+}
+
+model Project {
+  id           String       @id @default(uuid())
+  owner        User         @relation(fields: [ownerId], references: [id])
+  ownerId      String
+  title        String
+  slug         String       @unique
+  description  String?
+  settings     Json?
+  storyBible   Json?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  characters   Character[]
+  locations    Location[]
+  lores        Lore[]
+  beats        Beat[]
+  scenes       Scene[]
+  chapters     Chapter[]
+  drafts       Draft[]
+  checklists   Checklist[]
+  runs         Run[]
+  relations    Relation[]
+  metrics      Metric[]
+  subscriptions Subscription[]
+
+  @@index([ownerId, createdAt])
+}
+
+model Character {
+  id         String   @id @default(uuid())
+  project    Project  @relation(fields: [projectId], references: [id])
+  projectId  String
+  name       String
+  role       String?
+  bio        String?
+  tags       String[]
+  goals      Json?
+  flaws      String[]
+  relationships Json?
+  arc        Json?
+  continuity Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([projectId, name])
+}
+
+model Location {
+  id         String   @id @default(uuid())
+  project    Project  @relation(fields: [projectId], references: [id])
+  projectId  String
+  name       String
+  sensory    String[]
+  constraints String[]
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([projectId, name])
+}
+
+model Lore {
+  id         String   @id @default(uuid())
+  project    Project  @relation(fields: [projectId], references: [id])
+  projectId  String
+  label      String
+  rules      String[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([projectId, label])
+}
+
+model Beat {
+  id         String   @id @default(uuid())
+  project    Project  @relation(fields: [projectId], references: [id])
+  projectId  String
+  label      String
+  act        Int
+  seq        Int
+  order      Int
+  synopsis   String?
+  targets    String[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([projectId, order])
+}
+
+model Chapter {
+  id         String   @id @default(uuid())
+  project    Project  @relation(fields: [projectId], references: [id])
+  projectId  String
+  title      String
+  synopsis   String?
+  order      Int       @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  scenes     Scene[]
+  drafts     Draft[]
+
+  @@index([projectId, order])
+}
+
+model Scene {
+  id           String    @id @default(uuid())
+  project      Project   @relation(fields: [projectId], references: [id])
+  projectId    String
+  chapter      Chapter?  @relation(fields: [chapterId], references: [id])
+  chapterId    String?
+  title        String
+  slug         String?
+  pov          String?
+  locationId   String?
+  beats        String[]
+  intent       String?
+  outcome      String?
+  flags        String[]
+  summary      String?
+  metadata     Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  drafts       Draft[]
+
+  @@index([projectId, createdAt])
+}
+
+model Draft {
+  id           String   @id @default(uuid())
+  project      Project  @relation(fields: [projectId], references: [id])
+  projectId    String
+  scene        Scene?   @relation(fields: [sceneId], references: [id])
+  sceneId      String?
+  chapter      Chapter? @relation(fields: [chapterId], references: [id])
+  chapterId    String?
+  contentMd    String
+  meta         Json?
+  parent       Draft?   @relation("DraftParent", fields: [parentId], references: [id])
+  parentId     String?
+  children     Draft[]  @relation("DraftParent")
+  branch       String?
+  author       User     @relation("DraftAuthor", fields: [createdBy], references: [id])
+  createdBy    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  revisions    Revision[]
+
+  @@index([projectId, createdAt])
+}
+
+model Revision {
+  id        String   @id @default(uuid())
+  draft     Draft    @relation(fields: [draftId], references: [id])
+  draftId   String
+  contentMd String
+  meta      Json?
+  createdAt DateTime @default(now())
+}
+
+model Checklist {
+  id         String          @id @default(uuid())
+  project    Project         @relation(fields: [projectId], references: [id])
+  projectId  String
+  phase      ChecklistPhase
+  items      Json
+  isPassed   Boolean   @default(false)
+  passedAt   DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([projectId, phase])
+}
+
+model Run {
+  id          String     @id @default(uuid())
+  project     Project    @relation(fields: [projectId], references: [id])
+  projectId   String
+  target      RunTarget
+  targetId    String
+  contextPack Json
+  promptRecipe Json?
+  inputs      Json
+  outputDraft String?
+  scores      Json?
+  status      RunStatus  @default(OK)
+  tokens      Int?
+  model       String?
+  createdAt   DateTime   @default(now())
+  author      User?      @relation(fields: [authorId], references: [id])
+  authorId    String?
+
+  @@index([projectId, createdAt])
+  @@index([target, targetId])
+}
+
+model Relation {
+  id          String   @id @default(uuid())
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   String
+  sourceId    String
+  targetId    String
+  relation    String
+  payload     Json?
+  createdAt   DateTime @default(now())
+
+  @@index([projectId, relation])
+}
+
+model Metric {
+  id          String   @id @default(uuid())
+  project     Project  @relation(fields: [projectId], references: [id])
+  projectId   String
+  key         String
+  value       Float
+  metadata    Json?
+  recordedAt  DateTime @default(now())
+
+  @@index([projectId, key])
+}
+
+model Subscription {
+  id                    String              @id @default(uuid())
+  project               Project             @relation(fields: [projectId], references: [id])
+  projectId             String
+  user                  User                @relation(fields: [userId], references: [id])
+  userId                String
+  plan                  SubscriptionPlan    @default(FREE)
+  status                SubscriptionStatus  @default(TRIALING)
+  stripeCustomerId      String?
+  stripeSubscriptionId  String?
+  currentPeriodEnd      DateTime?
+  seats                 Int                 @default(1)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  @@unique([projectId, userId])
+}
+
+
+
+

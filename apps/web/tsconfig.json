@@ -1,0 +1,48 @@
+{
+    "extends":  "../../tsconfig.json",
+    "compilerOptions":  {
+                            "baseUrl":  ".",
+                            "jsx":  "preserve",
+                            "paths":  {
+                                          "@/lib/*":  [
+                                                          "lib/*"
+                                                      ],
+                                          "@/components/*":  [
+                                                                 "components/*"
+                                                             ],
+                                          "@/app/*":  [
+                                                          "app/*"
+                                                      ],
+                                          "@/store/*":  [
+                                                            "store/*"
+                                                        ],
+                                          "@/hooks/*":  [
+                                                            "hooks/*"
+                                                        ],
+                                          "@/providers/*":  [
+                                                                "providers/*"
+                                                            ]
+                                      },
+                            "types":  [
+                                          "@testing-library/jest-dom/vitest",
+                                          "vitest/globals"
+                                      ],
+                            "allowJs":  true,
+                            "incremental":  true,
+                            "plugins":  [
+                                            {
+                                                "name":  "next"
+                                            }
+                                        ]
+                        },
+    "include":  [
+                    "next-env.d.ts",
+                    "**/*.ts",
+                    "**/*.tsx",
+                    ".next/types/**/*.ts"
+                ],
+    "exclude":  [
+                    "node_modules"
+                ]
+}
+

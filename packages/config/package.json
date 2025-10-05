@@ -1,0 +1,15 @@
+{
+  "name": "@quillborn/config",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    "./tsconfig/base.json": "./tsconfig/base.json",
+    "./eslint/index.mjs": "./eslint/index.mjs",
+    "./prettier/index.cjs": "./prettier/index.cjs"
+  },
+  "peerDependencies": {
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
+  }
+}
