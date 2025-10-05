@@ -2,6 +2,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const subscriptionMock = vi.fn(async () => null);
 const runCreateMock = vi.fn(async () => ({}));
+const projectFindUniqueMock = vi.fn(async () => ({ ownerId: "user_1" }));
+const sceneFindUniqueMock = vi.fn(async () => ({
+  id: "scene_1",
+  projectId: "proj_1",
+  project: { ownerId: "user_1" }
+}));
+
+vi.mock("@/lib/auth/helpers", () => ({
+  getCurrentUser: vi.fn(async () => ({ id: "user_1" }))
+}));
 
 vi.mock("@/lib/context/composeScene", () => ({
   composeSceneContext: vi.fn(async () => ({
@@ -22,6 +32,12 @@ vi.mock("@/lib/prisma", () => ({
     subscription: {
       findFirst: subscriptionMock
     },
+    project: {
+      findUnique: projectFindUniqueMock
+    },
+    scene: {
+      findUnique: sceneFindUniqueMock
+    },
     run: {
       create: runCreateMock
     }
@@ -34,6 +50,8 @@ describe("POST /api/generate/scene", () => {
   beforeEach(() => {
     subscriptionMock.mockClear();
     runCreateMock.mockClear();
+    projectFindUniqueMock.mockClear();
+    sceneFindUniqueMock.mockClear();
   });
 
   it("returns mock draft", async () => {
