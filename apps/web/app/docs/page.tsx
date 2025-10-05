@@ -1,11 +1,12 @@
 import Link from "next/link";
+import type { Route } from "next";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@quillborn/ui";
 
 const docLinks = [
-  { href: "/docs/ARCHITECTURE", title: "Architecture", description: "Systems map for QuillBorn phases." },
-  { href: "/docs/ENV", title: "Environment", description: "Secrets, Supabase, and Vercel config." },
-  { href: "/docs/ROADMAP", title: "Roadmap", description: "Phase milestones and future upgrades." }
+  { href: "/docs/ARCHITECTURE" as Route, title: "Architecture", description: "Systems map for QuillBorn phases." },
+  { href: "/docs/ENV" as Route, title: "Environment", description: "Secrets, Supabase, and Vercel config." },
+  { href: "/docs/ROADMAP" as Route, title: "Roadmap", description: "Phase milestones and future upgrades." }
 ];
 
 export default function DocsIndex() {
@@ -35,3 +36,5 @@ export default function DocsIndex() {
     </div>
   );
 }
+
+
