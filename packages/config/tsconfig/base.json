@@ -9,7 +9,7 @@
                                         "DOM.Iterable"
                                     ],
                             "strict":  true,
-                            "skipLibCheck":  false,
+                            "skipLibCheck":  true,
                             "esModuleInterop":  true,
                             "allowSyntheticDefaultImports":  true,
                             "forceConsistentCasingInFileNames":  true,

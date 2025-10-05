@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { redirect } from "next/navigation";
 
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@quillborn/ui";
@@ -50,7 +51,7 @@ export default async function DashboardPage() {
             <CardContent className="flex items-center justify-between">
               <div className="text-xs text-muted-foreground">Slug: {project.slug}</div>
               <Button asChild variant="outline" size="sm">
-                <Link href={"/app/projects/" + project.id}>Open</Link>
+                <Link href={`/app/projects/${project.id}` as Route}>Open</Link>
               </Button>
             </CardContent>
           </Card>
@@ -69,3 +70,4 @@ export default async function DashboardPage() {
     </div>
   );
 }
+
